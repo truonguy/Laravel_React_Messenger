@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 
-const NewMessageInput = ({ value, onchange, onSend}) => {
+const NewMessageInput = ({ value, onChange, onSend }) => {
     const input = useRef();
 
     const onInputKeyDown = (ev) => {
@@ -8,21 +8,21 @@ const NewMessageInput = ({ value, onchange, onSend}) => {
             ev.preventDefault();
             onSend();
         }
-    }
+    };
 
     const onChangeEvent = (ev) => {
         setTimeout(() => {
             adjustHeight();
         }, 10);
-        onchange(ev);
-    }
+        onChange(ev);
+    };
 
     const adjustHeight = () => {
         setTimeout(() => {
             input.current.style.height = "auto";
             input.current.style.height = input.current.scrollHeight + 1 + "px";
         }, 100);
-    }
+    };
 
     useEffect(() => {
         adjustHeight();
@@ -30,15 +30,15 @@ const NewMessageInput = ({ value, onchange, onSend}) => {
 
     return (
         <textarea
-        ref={input}
-        value={value}
-        rows={1}
-        placeholder="Type a message..."
-        onKeyDown={onInputKeyDown}
-        onChange={(e) => {onChangeEvent(e)}}
-        className="input input-bordered w-full resize-none rounded-r-none overflow-y-auto max-h-40"
+            ref={input}
+            value={value}
+            rows={1}
+            placeholder="Tapez un message"
+            onKeyDown={onInputKeyDown}
+            onChange={(ev) => onChangeEvent(ev)}
+            className="input input-bordered w-full rounded-r-none resize-none overflow-y-auto max-h-40"
         ></textarea>
-    )
-}
+    );
+};
 
 export default NewMessageInput;

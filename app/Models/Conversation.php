@@ -12,7 +12,7 @@ class Conversation extends Model
     protected $fillable = [
         'user_id1',
         'user_id2',
-        'last_message_id',
+        'last_message_id'
     ];
 
     public function lastMessage()
@@ -32,27 +32,26 @@ class Conversation extends Model
 
     public static function getConversationsForSidebar(User $user)
     {
-        $userModel = new User();
-        $users = $userModel->getUsersExceptUser($user);
-        $groupModel = new Group();
-        $group = $groupModel->getGroupsForUser($user);
+        $users = User::getUsersExceptUser($user);
+        $groups = Group::getGroupsForUser($user);
         return $users->map(function (User $user) {
             return $user->toConversationArray();
-        })->concat($group->map(function (Group $group) {
+        })->concat($groups->map(function (Group $group) {
             return $group->toConversationArray();
         }));
     }
 
-    public static function updateConversationWithMessage($userId1, $userId2, $message){
-        $conversation = Conversation::where(function ($query) use ($userId1, $userId2){
+    public static function updateConversationWithMessage($userId1, $userId2, $message)
+    {
+        $conversation = Conversation::where(function ($query) use ($userId1, $userId2) {
             $query->where('user_id1', $userId1)
                 ->where('user_id2', $userId2);
-        })->orWhere(function ($query) use ($userId1, $userId2){
+        })->orWhere(function ($query) use ($userId1, $userId2) {
             $query->where('user_id1', $userId2)
                 ->where('user_id2', $userId1);
         })->first();
 
-        if($conversation){
+        if ($conversation) {
             $conversation->update([
                 'last_message_id' => $message->id,
             ]);
@@ -64,5 +63,4 @@ class Conversation extends Model
             ]);
         }
     }
-    
 }

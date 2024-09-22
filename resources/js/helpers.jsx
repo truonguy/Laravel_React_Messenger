@@ -33,6 +33,7 @@ export const formatMessageDateShort = (date) => {
         return inputDate.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
+            second: "2-digit",
         });
     } else if (isYesterday(inputDate)) {
         return "Yesterday";

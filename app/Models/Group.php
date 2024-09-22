@@ -13,7 +13,7 @@ class Group extends Model
         'name',
         'description',
         'owner_id',
-        'last_message_id',
+        'last_message_id'
     ];
 
     public function users()
@@ -28,11 +28,17 @@ class Group extends Model
 
     public function owner()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function getGroupsForUser(User $user) {
-        $query = self::select(['groups.*', 'messages.message as last message', 'messages.created_at as last_message_date'])
+    public function lastMessage()
+    {
+        return $this->belongsTo(Message::class, 'last_message_id');
+    }
+
+    public static function getGroupsForUser(User $user)
+    {
+        $query = self::select(['groups.*', 'messages.message as last_message', 'messages.created_at as last_message_date'])
             ->join('group_users', 'group_users.group_id', '=', 'groups.id')
             ->leftJoin('messages', 'messages.id', '=', 'groups.last_message_id')
             ->where('group_users.user_id', $user->id)
@@ -52,11 +58,11 @@ class Group extends Model
             'is_user' => false,
             'owner_id' => $this->owner_id,
             'users' => $this->users,
-            'user_ids' => $this->users->pluck('id'),
+            'users_ids' => $this->users->pluck('id'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'last_message' => $this->last_message,
-            'last_message_date' => $this->last_message_date,
+            'last_message_date' => $this->last_message_date ? ($this->last_message_date . ' UTC') : null,
         ];
     }
 

@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\MessageObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([MessageObserver::class])]
 class Message extends Model
 {
     use HasFactory;
@@ -13,7 +16,7 @@ class Message extends Model
         'message',
         'sender_id',
         'group_id',
-        'receiver_id',
+        'receiver_id'
     ];
 
     public function sender()
