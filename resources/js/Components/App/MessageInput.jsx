@@ -15,6 +15,9 @@ const MessageInput = ({ conversation = null }) => {
     const [messageSending, setMessageSending] = useState(false);
 
     const onSendClick = () => {
+        if (messageSending) {
+            return;
+        }
         if (newMessage.trim() === "") {
             setInputErrorMessage(
                 "Merci d'écrire votre message ou d'uploader un fichier"
@@ -77,6 +80,7 @@ const MessageInput = ({ conversation = null }) => {
                     <NewMessageInput
                         value={newMessage}
                         onSend={onSendClick}
+                        disabled={messageSending}
                         onChange={(ev) => setNewMessage(ev.target.value)}
                     />
                     <button
@@ -84,9 +88,6 @@ const MessageInput = ({ conversation = null }) => {
                         disabled={messageSending}
                         className="btn btn-info rounded-l-none"
                     >
-                        {messageSending && (
-                            <span className="loading loading-spinner loading-xs"></span>
-                        )}
                         <PaperAirplaneIcon className="w-6" />
                         <span className="hidden sm:inline">Send</span>
                     </button>

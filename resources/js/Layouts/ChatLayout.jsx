@@ -1,5 +1,6 @@
 import ConversationItem from "@/Components/App/ConversationItem";
 import TextInput from "@/Components/TextInput";
+import { useEventBus } from "@/EventBus";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { usePage } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
@@ -11,6 +12,8 @@ const ChatLayout = ({ children }) => {
     const [onlineUsers, setOnlineUsers] = useState({});
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
+
+    const { on } = useEventBus();
 
     const isUserOnline = (userId) => onlineUsers[userId];
 
@@ -47,6 +50,12 @@ const ChatLayout = ({ children }) => {
             });
         });
     };
+    useEffect(() => {
+        const offCreated = on("message.created", messageCreated);
+        return () => {
+            offCreated();
+        };
+    }, [on]);
 
     useEffect(() => {
         setSortedConversations(
