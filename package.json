@@ -22,6 +22,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@emoji-mart/data": "^1.2.1",
         "@heroicons/react": "^2.1.5",
         "daisyui": "^4.12.10",
         "emoji-picker-react": "^4.12.0",
