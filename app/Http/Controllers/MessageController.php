@@ -11,6 +11,7 @@ use App\Models\Message;
 use App\Models\MessageAttachment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -18,10 +19,10 @@ class MessageController extends Controller
 {
     public function byUser(User $user)
     {
-        $messages = Message::where('sender_id', auth()->id())
+        $messages = Message::where('sender_id', Auth::user()->id)
             ->where('receiver_id', $user->id)
             ->orWhere('sender_id', $user->id)
-            ->where('receiver_id', auth()->id())
+            ->where('receiver_id', Auth::user()->id)
             ->latest()
             ->paginate(10)
         ;
@@ -72,7 +73,7 @@ class MessageController extends Controller
     public function store(StoreMessageRequest $request)
     {
         $data = $request->validated();
-        $data['sender_id'] = auth()->id();
+        $data['sender_id'] = Auth::user()->id;
         $receiverId = $data['receiver_id'] ?? null;
         $groupId = $data['group_id'] ?? null;
 
@@ -100,7 +101,7 @@ class MessageController extends Controller
         }
 
         if ($receiverId) {
-            Conversation::updateConversationWithMessage($receiverId, auth()->id(), $message);
+            Conversation::updateConversationWithMessage($receiverId, Auth::user()->id, $message);
         }
 
         if ($groupId) {
@@ -117,30 +118,29 @@ class MessageController extends Controller
      */
     public function destroy(Message $message)
     {
-        if ($message->sender_id !== auth()->id()) {
-            return response()->json(['message' => 'Interdit'], 403);
+        if($message->sender_id !== Auth::user()->id){
+            return response()->json(['message' => 'Forbidden'], 403);
         }
 
         $group = null;
         $conversation = null;
 
-        if ($message->group_id) {
-            $group = Group::where('last_message-id', $message->id)->first();
+        if($message->group_id){
+            $group = Group::where('last_message_id', $message->id)->first();
         } else {
             $conversation = Conversation::where('last_message_id', $message->id)->first();
         }
-
         $message->delete();
 
         $lastMessage = null;
-        if ($group) {
+        if($group){
             $group = Group::find($group->id);
             $lastMessage = $group->lastMessage;
-        } else if ($conversation) {
+        }else if($conversation){
             $conversation = Conversation::find($conversation->id);
             $lastMessage = $conversation->lastMessage;
         }
 
-        return response()->json(['message' => $lastMessage ? new MessageResource($lastMessage) : null]);
+        return response()->json(['message' => isset($lastMessage) ? new MessageResource($lastMessage) : null]);
     }
 }
