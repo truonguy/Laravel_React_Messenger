@@ -33,7 +33,7 @@ const ConversationHeader = ({ selectedConversation }) => {
     return (
         <>
             {selectedConversation && (
-                <div className="p-3 flex z-[100] justify-between items-center border-b border-slate-700">
+                <div className="p-3 flex justify-between items-center border-b border-slate-700">
                     <div className="flex items-center gap-3">
                         <Link
                             href={route("dashboard")}
