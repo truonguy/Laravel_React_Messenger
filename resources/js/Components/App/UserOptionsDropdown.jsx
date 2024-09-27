@@ -1,3 +1,4 @@
+import { useEventBus } from "@/EventBus";
 import {
     Menu,
     MenuButton,
@@ -9,36 +10,36 @@ import { Fragment } from "react";
 
 
 export default function UserOptionsDropdown({ conversation }) {
+    const { emit } = useEventBus();
     const changeUserRole = () => {
-        console.log("Change User Role");
-        if(!conversation.is_user){
+        if (!conversation.is_user) {
             return;
         }
         axios
             .post(route("user.changeRole", conversation.id))
-            .then((response) => {
-                console.log(response.data);
+            .then((res) => {
+                emit("toast.show", res.data.message);
             })
             .catch((error) => {
                 console.log(error);
             });
     };
+
     const onBlockUser = () => {
-        console.log("Block User");
-        if(!conversation.is_user){
+        if (!conversation.is_user) {
             return;
         }
 
 
         axios
-            .post(route('user.blockUnblock', conversation.id))
-            .then((response) => {
-                console.log(response.data);
+            .post(route("user.blockUnblock", conversation.id))
+            .then((res) => {
+                emit("toast.show", res.data.message);
             })
             .catch((error) => {
                 console.log(error);
             });
-    }
+    };
     return (
         <div>
             <Menu as="div" className="relative inline-block text-left">

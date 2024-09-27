@@ -22,18 +22,18 @@ class UserController extends Controller
     {
         $user->update(['is_admin' => !(bool) $user->is_admin]);
         $message = "The role of the user has changed in " . ($user->is_admin ? '"Admin"' : '"Regular User"');
-        return response()->json(['message', $message]);
+        return response()->json(['message' => $message]);
     }
     public function blockUnblock(User $user)
     {
         if ($user->blocked_at) {
             $user->blocked_at = null;
-            $message = 'Your account has been activated';
+            $message = 'User "' .$user->name.'" has been activated';
         } else {
             $user->blocked_at = now();
-            $message = 'Your account has been blocked';
+            $message = 'User "' .$user->name.'" has been blocked';
         }
         $user->save();
-        return response()->json(['message', $message]);
+        return response()->json(['message' => $message]);
     }
 }
